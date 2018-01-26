@@ -15,6 +15,8 @@
 #import <React/RCTUtils.h>
 #import <React/UIView+React.h>
 
+#define IS_OS_11_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 11.0)
+
 @implementation AIREmptyCalloutBackgroundView
 @end
 
@@ -77,6 +79,11 @@
 
         _pinView.draggable = self.draggable;
         _pinView.layer.zPosition = self.zIndex;
+        if (IS_OS_11_OR_LATER) {
+            _pinView.layer.name = [@(self.zIndex) stringValue];
+            [_pinView.layer addObserver:self forKeyPath:@"zPosition" options:0 context:NULL];
+
+        }
 
         // TODO(lmr): Looks like this API was introduces in iOS 8. We may want to handle differently for earlier
         // versions. Right now it's just leaving it with the default color. People needing the colors are free to
@@ -92,7 +99,31 @@
         // In either case, we want to return the AIRMapMarker since it is both an MKAnnotation and an
         // MKAnnotationView all at the same time.
         self.layer.zPosition = self.zIndex;
+        if (IS_OS_11_OR_LATER) {
+            self.layer.name = [@(self.zIndex) stringValue];
+            [self.layer addObserver:self forKeyPath:@"zPosition" options:0 context:NULL];
+
+        }
         return self;
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context {
+
+    if (IS_OS_11_OR_LATER) {
+
+        if ([keyPath isEqualToString:@"zPosition"]) {
+            CALayer *layer = object;
+            int zPosition = FLT_MAX;
+            if (layer.name) {
+                zPosition = layer.name.intValue;
+            }
+            layer.zPosition = zPosition;
+        }
+
     }
 }
 
@@ -187,23 +218,23 @@
 - (void)_handleTap:(UITapGestureRecognizer *)recognizer {
     AIRMapMarker *marker = self;
     if (!marker) return;
-    
+
     if (marker.selected) {
         CGPoint touchPoint = [recognizer locationInView:marker.map.calloutView];
         if ([marker.map.calloutView hitTest:touchPoint withEvent:nil]) {
-            
+
             // the callout got clicked, not the marker
             id event = @{
                          @"action": @"callout-press",
                          };
-            
+
             if (marker.onCalloutPress) marker.onCalloutPress(event);
             if (marker.calloutView && marker.calloutView.onPress) marker.calloutView.onPress(event);
             if (marker.map.onCalloutPress) marker.map.onCalloutPress(event);
             return;
         }
     }
-    
+
     // the actual marker got clicked
     id event = @{
                  @"action": @"marker-press",
@@ -213,10 +244,10 @@
                          @"longitude": @(marker.coordinate.longitude)
                          }
                  };
-    
+
     if (marker.onPress) marker.onPress(event);
     if (marker.map.onMarkerPress) marker.map.onMarkerPress(event);
-    
+
     [marker.map selectAnnotation:marker animated:NO];
 }
 

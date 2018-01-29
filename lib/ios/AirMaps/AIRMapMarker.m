@@ -130,6 +130,17 @@ NSInteger _zIndexBeforeOpen = 0;
     }
 }
 
+-(void) dealloc {
+  if (IS_OS_11_OR_LATER) {
+    @try {
+      [self.layer removeObserver:self forKeyPath:@"zPosition"];
+    }
+    @catch (NSException * e) {
+      // Probably it was not set before
+    }
+  }
+}
+
 - (void)fillCalloutView:(SMCalloutView *)calloutView
 {
     // Set everything necessary on the calloutView before it becomes visible.

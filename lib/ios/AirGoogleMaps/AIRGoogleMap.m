@@ -233,6 +233,7 @@ id regionAsJSON(MKCoordinateRegion region) {
 
 - (void)didChangeCameraPosition:(GMSCameraPosition *)position {
   id event = @{@"continuous": @YES,
+               @"bearing": @(position.bearing),
                @"region": regionAsJSON([AIRGoogleMap makeGMSCameraPositionFromMap:self andGMSCameraPosition:position]),
                };
 
@@ -241,6 +242,7 @@ id regionAsJSON(MKCoordinateRegion region) {
 
 - (void)idleAtCameraPosition:(GMSCameraPosition *)position {
   id event = @{@"continuous": @NO,
+               @"bearing": @(position.bearing),
                @"region": regionAsJSON([AIRGoogleMap makeGMSCameraPositionFromMap:self andGMSCameraPosition:position]),
                };
   if (self.onChange) self.onChange(event);  // complete

@@ -38,6 +38,10 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
   private static final int FIT_TO_COORDINATES = 7;
   private static final int SET_MAP_BOUNDARIES = 8;
   private static final int ANIMATE_TO_NAVIGATION = 9;
+  private static final double LN2 = 0.6931471805599453;
+  private static final int WORLD_PX_HEIGHT = 256;
+  private static final int WORLD_PX_WIDTH = 256;
+  private static final int ZOOM_MAX = 21;
 
 
   private final Map<String, Integer> MAP_TYPES = MapBuilder.of(
@@ -241,6 +245,32 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
     }
   }
 
+  public int getBoundsZoomLevel(LatLngBounds bounds, int mapWidthPx, int mapHeightPx){
+
+    LatLng ne = bounds.northeast;
+    LatLng sw = bounds.southwest;
+
+    double latFraction = (latRad(ne.latitude) - latRad(sw.latitude)) / Math.PI;
+
+    double lngDiff = ne.longitude - sw.longitude;
+    double lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+    double latZoom = zoom(mapHeightPx, WORLD_PX_HEIGHT, latFraction);
+    double lngZoom = zoom(mapWidthPx, WORLD_PX_WIDTH, lngFraction);
+
+    int result = Math.min((int)latZoom, (int)lngZoom);
+    return Math.min(result, ZOOM_MAX);
+  }
+
+  private double latRad(double lat) {
+    double sin = Math.sin(lat * Math.PI / 180);
+    double radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
+    return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
+  }
+  private double zoom(int mapPx, int worldPx, double fraction) {
+    return Math.floor(Math.log(mapPx / worldPx / fraction) / LN2);
+  }
+
   @Override
   public void receiveCommand(AirMapView view, int commandId, @Nullable ReadableArray args) {
     Integer duration;
@@ -257,11 +287,17 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
         region = args.getMap(0);
         lng = region.getDouble("longitude");
         lat = region.getDouble("latitude");
+        lngDelta = region.getDouble("longitudeDelta");
+        latDelta = region.getDouble("latitudeDelta");
         LatLng location = new LatLng(lat, lng);
+        float zoom = getBoundsZoomLevel(new LatLngBounds(
+                new LatLng(lat - latDelta / 2, lng - lngDelta / 2), // southwest
+                new LatLng(lat + latDelta / 2, lng + lngDelta / 2)  // northeast
+        ), view.getWidth(), view.getHeight());
         bearing = (float)args.getDouble(1);
         angle = (float)args.getDouble(2);
         duration = args.getInt(3);
-        view.animateToNavigation(location, bearing, angle, duration);
+        view.animateToNavigation(location, zoom, bearing, angle, duration);
         break;
 
       case ANIMATE_TO_REGION:

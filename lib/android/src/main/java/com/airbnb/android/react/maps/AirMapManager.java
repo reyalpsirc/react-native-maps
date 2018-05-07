@@ -245,6 +245,7 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
     }
   }
 
+  // Credits to https://stackoverflow.com/questions/10620515/how-do-i-determine-the-zoom-level-of-a-latlngbounds-before-using-map-fitbounds#answer-23462828
   public int getBoundsZoomLevel(LatLngBounds bounds, int mapWidthPx, int mapHeightPx){
 
     LatLng ne = bounds.northeast;

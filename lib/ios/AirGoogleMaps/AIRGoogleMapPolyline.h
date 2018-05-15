@@ -17,7 +17,7 @@
 @property (nonatomic, strong) AIRGMSPolyline *polyline;
 @property (nonatomic, strong) NSArray<AIRMapCoordinate *> *coordinates;
 @property (nonatomic, copy) RCTBubblingEventBlock onPress;
-
+@property (nonatomic, strong) NSArray <NSNumber *> *lineDashPattern;
 @property (nonatomic, strong) UIColor *strokeColor;
 @property (nonatomic, assign) double strokeWidth;
 @property (nonatomic, assign) UIColor *fillColor;

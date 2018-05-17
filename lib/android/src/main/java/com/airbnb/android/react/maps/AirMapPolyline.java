@@ -24,6 +24,7 @@ public class AirMapPolyline extends AirMapFeature {
   private Polyline polyline;
 
   private List<LatLng> coordinates;
+  private List<PatternItem> dash;
   private int color;
   private float width;
   private boolean geodesic;
@@ -32,7 +33,7 @@ public class AirMapPolyline extends AirMapFeature {
   public AirMapPolyline(Context context) {
     super(context);
   }
-  
+
   public void setDash(ReadableArray dash) {
       List<PatternItem> pattern = new ArrayList<PatternItem>();
       for (int i = 0; i < dash.size(); i++) {

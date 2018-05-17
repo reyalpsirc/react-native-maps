@@ -1,16 +1,22 @@
 package com.airbnb.android.react.maps;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
 
 public class AirMapPolyline extends AirMapFeature {
 
@@ -26,7 +32,24 @@ public class AirMapPolyline extends AirMapFeature {
   public AirMapPolyline(Context context) {
     super(context);
   }
+  
+  public void setDash(ReadableArray dash) {
+      List<PatternItem> pattern = new ArrayList<PatternItem>();
+      for (int i = 0; i < dash.size(); i++) {
+          PatternItem p = i%2 == 0 ? new Dash(dash.getInt(i)) : new Gap(dash.getInt(i));
+          pattern.add(p);
+      }
+              
+       // = Arrays.asList(new Dash(dash.getInt(0)), new Gap(dash.getInt(1)));
 
+      this.dash = pattern;
+    if (polyline != null) {
+
+      polyline.setPattern(pattern);
+      // polyline.setColor(color);
+    }
+  }
+  
   public void setCoordinates(ReadableArray coordinates) {
     this.coordinates = new ArrayList<>(coordinates.size());
     for (int i = 0; i < coordinates.size(); i++) {

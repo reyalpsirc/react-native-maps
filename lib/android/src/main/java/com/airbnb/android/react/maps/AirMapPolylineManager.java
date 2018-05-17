@@ -67,6 +67,11 @@ public class AirMapPolylineManager extends ViewGroupManager<AirMapPolyline> {
   public void setZIndex(AirMapPolyline view, float zIndex) {
     view.setZIndex(zIndex);
   }
+  
+  @ReactProp(name = "lineDashPattern")
+  public void setDash(AirMapPolyline view, ReadableArray dash) {
+    view.setDash(dash);
+  }
 
   @Override
   @Nullable

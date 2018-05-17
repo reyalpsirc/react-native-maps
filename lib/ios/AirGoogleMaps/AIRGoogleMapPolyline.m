@@ -21,7 +21,36 @@
   }
   return self;
 }
+-(void)updateLineDashPattern:(double)scale {
+  
+  // scale = 1.0 / mapView.projection.pointsForMeters(1, atCoordinate: mapView.camera.target)
+//  NSArray *lengths = @[@25, @20];
+  NSMutableArray *scalePatterns = [[NSMutableArray alloc] init];
+  for(int i=0; i< _lineDashPattern.count; i++){
+    [scalePatterns addObject:@(_lineDashPattern[i].intValue * scale)];
+  }
+  _scale = scale;
+  NSArray *styles = @[[GMSStrokeStyle solidColor: _strokeColor],
+                      [GMSStrokeStyle solidColor:[UIColor clearColor]]];
+  _polyline.spans = GMSStyleSpans(_polyline.path, styles, scalePatterns, kGMSLengthRhumb);
+}
 
+-(void)updateLineDash:(double)scale {
+
+  NSMutableArray *scalePatterns = [[NSMutableArray alloc] init];
+  for(int i=0; i< _lineDashPattern.count; i++){
+    [scalePatterns addObject:@(_lineDashPattern[i].intValue * scale)];
+  }
+  NSArray *styles = @[[GMSStrokeStyle solidColor: _strokeColor],
+                      [GMSStrokeStyle solidColor:[UIColor clearColor]]];
+    if (_polyline) {
+        @try {
+            _polyline.spans = GMSStyleSpans(_polyline.path, styles, scalePatterns, kGMSLengthRhumb);
+        } @catch (NSException *exception) {
+            
+        }
+    }
+}
 -(void)setCoordinates:(NSArray<AIRMapCoordinate *> *)coordinates
 {
   _coordinates = coordinates;

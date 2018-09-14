@@ -196,6 +196,11 @@ CGRect unionRect(CGRect a, CGRect b) {
     _reloadImageCancellationBlock();
     _reloadImageCancellationBlock = nil;
   }
+  
+  if (!_iconSrc) {
+    if (_realMarker.icon) _realMarker.icon = nil;
+    return;
+  }
 
   _reloadImageCancellationBlock =
   [_bridge.imageLoader loadImageWithURLRequest:[RCTConvert NSURLRequest:_iconSrc]

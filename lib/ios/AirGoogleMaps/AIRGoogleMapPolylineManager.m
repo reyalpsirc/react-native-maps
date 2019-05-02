@@ -31,7 +31,6 @@ RCT_EXPORT_MODULE()
   polyline.bridge = self.bridge;
   return polyline;
 }
-RCT_EXPORT_VIEW_PROPERTY(lineDashPattern, NSArray)
 RCT_EXPORT_VIEW_PROPERTY(coordinates, AIRMapCoordinateArray)
 RCT_EXPORT_VIEW_PROPERTY(fillColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(strokeColor, UIColor)

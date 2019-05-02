@@ -388,14 +388,4 @@ NSInteger const AIR_CALLOUT_OPEN_ZINDEX_BASELINE = 999;
     self.layer.zPosition = zIndex;
 }
 
-- (void)dealloc {
-    [self.layer removeObserver:self forKeyPath:@"zPosition"];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"zPosition"]) {
-        self.layer.zPosition = _zIndex;
-    }
-}
-
 @end

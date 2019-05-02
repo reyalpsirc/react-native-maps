@@ -42,6 +42,10 @@ public class AirMapManager extends ViewGroupManager<AirMapView> {
   private static final int SET_INDOOR_ACTIVE_LEVEL_INDEX = 10;
   private static final int SET_CAMERA = 11;
   private static final int ANIMATE_CAMERA = 12;
+  private static final float LN2 = 0.6931471805599453f;
+  private static final int WORLD_PX_HEIGHT = 256;
+  private static final int WORLD_PX_WIDTH = 256;
+  private static final int ZOOM_MAX = 21;
 
 
   private final Map<String, Integer> MAP_TYPES = MapBuilder.of(
